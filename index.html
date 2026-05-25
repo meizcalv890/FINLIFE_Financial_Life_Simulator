@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FINLIFE</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #f5c842;
+  --gold2: #e8a800;
+  --gold-glow: rgba(245,200,66,0.18);
+  --bg: #0d0d14;
+  --surface: #13131f;
+  --surface2: #1a1a2d;
+  --border: rgba(255,255,255,0.07);
+  --border-gold: rgba(245,200,66,0.3);
+  --green: #22c55e;
+  --red: #ef4444;
+  --text: #eeeef5;
+  --muted: #6b6b8a;
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(245,200,66,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 80%, rgba(100,80,200,0.06) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.018) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.018) 40px);
+  pointer-events: none;
+}
+
+.icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+.icon svg { display: block; }
+
+/* START SCREEN */
+#startCanvas {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+#startScreen {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  height: 100dvh;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  overflow: hidden;
+  padding: clamp(40px, 10vh, 72px) clamp(20px, 6vw, 32px) clamp(20px, 5vh, 36px);
+}
+
+/* HERO */
+.start-hero {
+  display: flex; flex-direction: column;
+  align-items: center;
+  width: 100%;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.brand-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(44px, 13vw, 74px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 0.95;
+  background: linear-gradient(105deg,
+    #e8a800 0%, #f5c842 30%, #ffe580 50%, #f5c842 70%, #e8a800 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShimmer 3.5s 0.8s linear infinite;
+}
+
+.brand-sub-row {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  margin-top: clamp(8px, 2vh, 14px);
+}
+.brand-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,200,66,0.35));
+}
+.brand-line.right {
+  background: linear-gradient(90deg, rgba(245,200,66,0.35), transparent);
+}
+.brand-tagline {
+  font-size: clamp(8px, 2vw, 10px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* BOTTOM */
+.start-bottom {
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(10px, 2.5vh, 16px);
+  opacity: 0;
+  animation: slideUp 0.7s 0.3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+.start-desc {
+  max-width: 320px;
+  font-size: clamp(12px, 3vw, 13.5px);
+  color: #8a8aaa;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.start-actions { display: flex; flex-direction: column; align-items: center; gap: 9px; width: 100%; max-width: 280px; }
+
+.play-btn {
+  background: linear-gradient(135deg, #f5c842 0%, #e8a800 100%);
+  color: #0d0d14;
+  border: none;
+  padding: clamp(13px, 3.5vw, 16px) 0;
+  width: 100%;
+  border-radius: 50px;
+  font-size: clamp(12px, 3.5vw, 14px);
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(.16,1,.3,1);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  position: relative; overflow: hidden;
+}
+.play-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  border-radius: 50px;
+}
+.play-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(245,200,66,0.4); }
+.play-btn:active { transform: translateY(0) scale(0.97); }
+
+.history-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--muted);
+  padding: clamp(9px, 2.5vw, 11px) 0;
+  width: 100%;
+  border-radius: 50px;
+  font-size: clamp(11px, 3vw, 12.5px);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.history-btn:hover { border-color: var(--border-gold); color: var(--gold); background: var(--gold-glow); }
+
+.start-music-note {
+  font-size: clamp(9px, 2.2vw, 10.5px);
+  color: var(--muted);
+  opacity: 0.45;
+  display: flex; align-items: center; gap: 5px; justify-content: center;
+}
+
+/* ANIMATIONS */
+@keyframes goldShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* GAME SCREEN */
+#gameScreen {
+  display: none;
+  position: relative; z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeUp 0.4s cubic-bezier(.16,1,.3,1) both;
+}
+#gameScreen.active { display: flex; }
+
+/* HEADER */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(10px, 2.5vh, 14px) clamp(12px, 4vw, 16px);
+  background: rgba(13,13,20,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.header-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: clamp(32px, 8vw, 38px);
+  height: clamp(32px, 8vw, 38px);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.header-btn:hover { background: var(--surface2); border-color: var(--border-gold); color: var(--gold); }
+.header-btn.active-btn { background: var(--gold-glow); border-color: var(--gold); color: var(--gold); }
+
+.header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(15px, 4.5vw, 20px);
+  font-weight: 800;
+  letter-spacing: clamp(2px, 1vw, 4px);
+  color: var(--gold);
+  text-shadow: 0 0 20px rgba(245,200,66,0.3);
+}
+
+/* CONTENT */
+.game-content {
+  flex: 1;
+  padding: clamp(10px, 2.5vh, 16px) clamp(12px, 4vw, 16px) clamp(12px, 2.5vh, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.8vh, 12px);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* STATS PANEL */
+.stats-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(10px, 2vh, 16px) clamp(12px, 4vw, 18px);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.stats-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(3px, 0.8vh, 5px) 0;
+  font-size: clamp(11px, 2.8vw, 13px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-label {
+  color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 500;
+}
+.stat-value { font-weight: 700; color: var(--gold); font-size: clamp(11px, 2.9vw, 13.5px); }
+
+.day-badge {
+  background: var(--gold-glow);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  padding: 1px 9px;
+  font-size: clamp(10px, 2.5vw, 12px);
+  font-weight: 700;
+  color: var(--gold);
+  display: flex; align-items: center; gap: 4px;
+}
+
+.progress-wrap { margin-top: clamp(8px, 1.8vh, 13px); }
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-size: clamp(9px, 2.3vw, 11px); color: var(--muted); margin-bottom: 5px;
+  font-weight: 500;
+}
+.progress-label span:last-child { color: var(--gold); font-weight: 700; }
+.progress-track {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold2), var(--gold));
+  width: 0%; transition: width 0.6s cubic-bezier(.16,1,.3,1);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(245,200,66,0.4);
+}
+
+/* EVENT CARD */
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(14px, 3vh, 22px) clamp(14px, 4vw, 20px);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-height: clamp(70px, 15vh, 110px);
+}
+.event-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
+}
+.event-text {
+  font-size: clamp(12.5px, 3.5vw, 15px);
+  line-height: 1.65;
+  color: var(--text);
+  font-weight: 400;
+  text-align: center;
+}
+
+/* CHOICES */
+.choices { display: flex; gap: clamp(8px, 2vw, 10px); flex-shrink: 0; }
+.choice-btn {
+  flex: 1; padding: clamp(11px, 2.8vh, 15px) 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: clamp(12px, 3.2vw, 14px); font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(.16,1,.3,1);
+  min-height: clamp(44px, 10vh, 52px);
+  letter-spacing: 0.3px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.choice-btn:hover { transform: translateY(-2px); }
+.choice-btn:active { transform: scale(0.97); }
+.btn-yes {
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.3);
+  color: #4ade80;
+}
+.btn-yes:hover { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.5); box-shadow: 0 4px 20px rgba(34,197,94,0.15); }
+.btn-no {
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.3);
+  color: #f87171;
+}
+.btn-no:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); box-shadow: 0 4px 20px rgba(239,68,68,0.15); }
+
+.game-tip {
+  text-align: center;
+  font-size: clamp(9px, 2.3vw, 11px);
+  color: var(--muted);
+  opacity: 0.6;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  flex-shrink: 0;
+}
+
+/* OVERLAYS */
+.overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(6,6,12,0.88);
+  backdrop-filter: blur(12px);
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 16px;
+}
+.overlay.show { display: flex; }
+
+.overlay-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(20px, 5vh, 30px) clamp(16px, 5vw, 26px);
+  width: 100%; max-width: 340px;
+  text-align: center;
+  animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  position: relative; overflow: hidden;
+}
+.overlay-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.overlay-icon {
+  width: 48px; height: 48px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.overlay-icon-pause  { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.2); }
+.overlay-icon-result { font-size: 44px; width: auto; height: auto; background: none; border: none; }
+
+.overlay-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.overlay-sub {
+  font-size: clamp(11px, 3vw, 13px);
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.overlay-btn {
+  width: 100%;
+  padding: clamp(11px, 2.8vh, 13px);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: clamp(12px, 3.2vw, 14px);
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: all 0.18s;
+  margin-top: 8px;
+  letter-spacing: 0.3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.overlay-btn:hover { transform: translateY(-1px); }
+.overlay-btn:active { transform: scale(0.97); }
+.obtn-resume { background: var(--gold); color: #0d0d14; border-color: var(--gold); }
+.obtn-resume:hover { box-shadow: 0 6px 24px rgba(245,200,66,0.3); }
+.obtn-quit { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.25); }
+.obtn-quit:hover { background: rgba(239,68,68,0.18); }
+.obtn-restart { background: var(--gold); color: #0d0d14; border-color: var(--gold); }
+.obtn-restart:hover { box-shadow: 0 6px 24px rgba(245,200,66,0.3); }
+.obtn-menu { background: var(--surface2); color: var(--text); border-color: var(--border); }
+.obtn-menu:hover { border-color: var(--border-gold); }
+
+/* SETTINGS */
+.settings-section { text-align: left; margin-bottom: 16px; }
+.settings-label {
+  font-size: clamp(9px, 2.3vw, 10px);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.lang-btns { display: flex; gap: 7px; }
+.lang-btn {
+  flex: 1; padding: 9px 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: clamp(11px, 3vw, 13px);
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.lang-btn.selected { background: var(--gold-glow); border-color: var(--border-gold); color: var(--gold); }
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-info { display: flex; align-items: center; gap: 9px; }
+.toggle-icon-wrap {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+}
+.toggle-name { font-size: clamp(12px, 3vw, 13.5px); font-weight: 500; }
+
+.switch { position: relative; display: inline-block; width: 42px; height: 22px; }
+.switch input { display: none; }
+.slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: rgba(255,255,255,0.08);
+  border-radius: 22px; transition: 0.3s;
+  border: 1px solid var(--border);
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  height: 16px; width: 16px;
+  left: 2px; bottom: 2px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: 0.3s;
+}
+input:checked + .slider { background: rgba(34,197,94,0.2); border-color: #22c55e; }
+input:checked + .slider::before { transform: translateX(20px); background: #22c55e; }
+
+.obtn-close {
+  width: 100%; padding: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: clamp(11px, 3vw, 13px);
+  font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; margin-top: 6px; transition: all 0.18s;
+  font-weight: 600;
+}
+.obtn-close:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+/* RESULT */
+.result-stats {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: clamp(10px, 2.5vh, 14px) clamp(12px, 4vw, 16px);
+  margin-bottom: 16px;
+  text-align: left;
+}
+.result-stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: clamp(11px, 2.8vw, 13px); padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.result-stat-row:last-child { border-bottom: none; }
+.result-stat-label { color: var(--muted); display: flex; align-items: center; gap: 6px; font-weight: 500; }
+.result-stat-val { color: var(--gold); font-weight: 700; }
+
+/* HISTORY */
+.history-overlay-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(16px, 4vh, 26px) clamp(14px, 5vw, 22px);
+  width: 100%; max-width: 400px;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  position: relative; overflow: hidden;
+}
+.history-overlay-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.history-list {
+  overflow-y: auto; flex: 1;
+  margin: 12px 0;
+  display: flex; flex-direction: column; gap: 7px;
+  padding-right: 3px;
+}
+.history-list::-webkit-scrollbar { width: 3px; }
+.history-list::-webkit-scrollbar-track { background: transparent; }
+.history-list::-webkit-scrollbar-thumb { background: rgba(245,200,66,0.25); border-radius: 3px; }
+
+.history-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  transition: border-color 0.18s;
+}
+.history-item:hover { border-color: var(--border-gold); }
+.history-item-icon-wrap {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 17px;
+}
+.icon-win     { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); }
+.icon-lose    { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.2); }
+.icon-neutral { background: rgba(245,200,66,0.12); border: 1px solid rgba(245,200,66,0.2); }
+.history-item-info { flex: 1; text-align: left; min-width: 0; }
+.history-item-date { font-size: clamp(9.5px, 2.3vw, 11px); color: var(--muted); font-weight: 400; }
+.history-item-result { font-size: clamp(11px, 2.8vw, 12.5px); font-weight: 600; color: var(--text); margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item-stats { font-size: clamp(10px, 2.5vw, 11.5px); color: var(--muted); }
+.history-item-badge {
+  font-size: clamp(9.5px, 2.3vw, 11px); font-weight: 700;
+  padding: 2px 8px; border-radius: 20px; flex-shrink: 0;
+}
+.badge-win     { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.badge-lose    { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+.badge-neutral { background: rgba(245,200,66,0.12); color: var(--gold); border: 1px solid rgba(245,200,66,0.22); }
+.history-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 28px 0; }
+
+.history-footer { display: flex; gap: 7px; margin-top: 4px; }
+.obtn-clear {
+  flex: 1; padding: 10px;
+  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.22);
+  border-radius: var(--radius-sm); color: #f87171;
+  font-size: clamp(11px, 2.8vw, 12.5px); font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: all 0.18s; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.obtn-clear:hover { background: rgba(239,68,68,0.18); }
+.obtn-history-close {
+  flex: 1; padding: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--muted);
+  font-size: clamp(11px, 2.8vw, 12.5px); font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: all 0.18s; font-weight: 600;
+}
+.obtn-history-close:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60%  { transform: translateX(-5px); }
+  40%,80%  { transform: translateX(5px); }
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); }
+}
+.shake { animation: shake 0.35s ease; }
+.pulse { animation: pulse 0.3s ease; }
+
+/* LANDSCAPE COMPACT */
+@media (max-height: 500px) and (orientation: landscape) {
+  .game-header { padding: 7px 12px; }
+  .header-title { font-size: 13px; letter-spacing: 2px; }
+  .header-btn { width: 30px; height: 30px; }
+  .game-content { padding: 7px 12px 9px; gap: 6px; }
+  .stats-panel { padding: 7px 12px; }
+  .stat-row { padding: 2px 0; }
+  .progress-wrap { margin-top: 6px; }
+  .event-card { min-height: 52px; padding: 8px 12px; }
+  .choice-btn { min-height: 36px; padding: 7px 6px; }
+  .game-tip { display: none; }
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="ic-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="ic-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>
+    <rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </symbol>
+  <symbol id="ic-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+    <path d="M3 3v5h5"/>
+    <path d="M12 7v5l4 2"/>
+  </symbol>
+  <symbol id="ic-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 12V22H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2"/>
+    <path d="M20 12a2 2 0 0 0-2-2h-2a2 2 0 0 0 0 4h2a2 2 0 0 0 2-2z"/>
+  </symbol>
+  <symbol id="ic-piggy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-2.1c2-.9 3-2.2 3-3.9a5 5 0 0 0-1-3"/>
+    <path d="M2 9V7c0-1.1.9-2 2-2h1"/>
+    <circle cx="16.5" cy="7.5" r="0.5" fill="currentColor"/>
+  </symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="12" cy="12" r="6"/>
+    <circle cx="12" cy="12" r="2"/>
+  </symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <symbol id="ic-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+    <path d="M4 22h16"/>
+    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+    <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+  </symbol>
+  <symbol id="ic-sad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+    <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+    <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-meh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="8" y1="15" x2="16" y2="15"/>
+    <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+    <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="ic-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+  </symbol>
+  <symbol id="ic-volume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </symbol>
+  <symbol id="ic-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+    <path d="M10 11v6"/>
+    <path d="M14 11v6"/>
+    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+  </symbol>
+  <symbol id="ic-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+    <path d="M21 3v5h-5"/>
+    <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+    <path d="M3 21v-5h5"/>
+  </symbol>
+  <symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </symbol>
+  <symbol id="ic-tip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+    <path d="M9 18h6"/>
+    <path d="M10 22h4"/>
+  </symbol>
+  <symbol id="ic-flag-id" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">
+    <rect width="20" height="7" fill="#CE1126"/>
+    <rect y="7" width="20" height="7" fill="#ffffff"/>
+  </symbol>
+  <symbol id="ic-flag-en" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">
+    <rect width="20" height="14" fill="#012169"/>
+    <path d="M0,0 L20,14 M20,0 L0,14" stroke="white" stroke-width="3"/>
+    <path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.5"/>
+    <path d="M10,0 V14 M0,7 H20" stroke="white" stroke-width="4"/>
+    <path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="2.5"/>
+  </symbol>
+</svg>
+
+<script>
+function svg(id, size=18, extra='') {
+  return `<svg class="icon" width="${size}" height="${size}" style="display:inline-block;vertical-align:middle;flex-shrink:0" ${extra}><use href="#${id}"/></svg>`;
+}
+</script>
+
+<!-- START SCREEN -->
+<div id="startScreen">
+  <canvas id="startCanvas"></canvas>
+
+  <!-- HERO -->
+  <div class="start-hero">
+    <div class="brand-logo">FINLIFE</div>
+    <div class="brand-sub-row">
+      <span class="brand-line"></span>
+      <span class="brand-tagline">Financial Life Simulator</span>
+      <span class="brand-line right"></span>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="start-bottom">
+    <p class="start-desc" id="startDesc">
+      Kelola uangmu selama 30 hari, ambil keputusan terbaik, dan capai target tabungan Rp1.000.000.
+    </p>
+    <div class="start-actions">
+      <button class="play-btn" onclick="mulaiGame()" id="startBtn">
+        <svg width="15" height="15"><use href="#ic-play"/></svg>
+        MAINKAN
+      </button>
+      <button class="history-btn" onclick="openHistory()" id="startHistoryBtn">
+        <svg width="14" height="14"><use href="#ic-history"/></svg>
+        Riwayat Permainan
+      </button>
+    </div>
+    <div class="start-music-note" id="startMusicNote">
+      <svg width="12" height="12" style="opacity:.5"><use href="#ic-music"/></svg>
+      Aktifkan volume untuk pengalaman terbaik
+    </div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen">
+  <header class="game-header">
+    <button class="header-btn" id="pauseBtn" onclick="togglePause()" title="Pause">
+      <svg width="15" height="15"><use href="#ic-pause"/></svg>
+    </button>
+    <span class="header-title">FINLIFE</span>
+    <button class="header-btn" id="settingsBtn" onclick="openSettings()" title="Settings">
+      <svg width="15" height="15"><use href="#ic-settings"/></svg>
+    </button>
+  </header>
+
+  <div class="game-content">
+    <div class="stats-panel">
+      <div class="stat-row">
+        <span class="stat-label">
+          <svg width="13" height="13" style="color:var(--muted)"><use href="#ic-calendar"/></svg>
+          <span id="lblDay">Hari</span>
+        </span>
+        <span class="day-badge">
+          <svg width="10" height="10"><use href="#ic-calendar"/></svg>
+          <span id="day">1</span>/30
+        </span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">
+          <svg width="13" height="13" style="color:var(--muted)"><use href="#ic-wallet"/></svg>
+          <span id="lblMoney">Uang</span>
+        </span>
+        <span class="stat-value" id="money">Rp 1.000.000</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">
+          <svg width="13" height="13" style="color:var(--muted)"><use href="#ic-piggy"/></svg>
+          <span id="lblSaving">Tabungan</span>
+        </span>
+        <span class="stat-value" id="saving">Rp 0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">
+          <svg width="13" height="13" style="color:var(--muted)"><use href="#ic-target"/></svg>
+          <span id="lblTarget">Target</span>
+        </span>
+        <span class="stat-value">Rp 1.000.000</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="lblProgress">Progress Tabungan</span>
+          <span id="pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="event-card" id="eventCard">
+      <p class="event-text" id="eventText">Memuat...</p>
+    </div>
+
+    <div class="choices">
+      <button class="choice-btn btn-yes" id="btnYes" onclick="pilih(1)">
+        <svg width="14" height="14"><use href="#ic-check"/></svg>
+        Iya
+      </button>
+      <button class="choice-btn btn-no" id="btnNo" onclick="pilih(2)">
+        <svg width="14" height="14"><use href="#ic-x"/></svg>
+        Tidak
+      </button>
+    </div>
+
+    <p class="game-tip" id="gameTip">
+      <svg width="12" height="12" style="color:var(--gold);opacity:.7"><use href="#ic-tip"/></svg>
+      Tip: Jangan boros di awal bulan
+    </p>
+  </div>
+</div>
+
+<!-- PAUSE OVERLAY -->
+<div class="overlay" id="pauseOverlay">
+  <div class="overlay-card">
+    <div class="overlay-icon overlay-icon-pause">
+      <svg width="20" height="20" style="color:var(--gold)"><use href="#ic-pause"/></svg>
+    </div>
+    <div class="overlay-title" id="pauseTitle">PAUSE</div>
+    <p class="overlay-sub" id="pauseSub">Game dijeda</p>
+    <button class="overlay-btn obtn-resume" onclick="togglePause()" id="btnResume">
+      <svg width="14" height="14"><use href="#ic-play"/></svg>
+      Lanjutkan
+    </button>
+    <button class="overlay-btn obtn-quit" onclick="quitToMenu()" id="btnQuit">
+      <svg width="14" height="14"><use href="#ic-x"/></svg>
+      Selesai
+    </button>
+  </div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div class="overlay" id="settingsOverlay">
+  <div class="overlay-card">
+    <div class="overlay-icon overlay-icon-pause">
+      <svg width="20" height="20" style="color:var(--gold)"><use href="#ic-settings"/></svg>
+    </div>
+    <div class="overlay-title" style="letter-spacing:1px" id="settingsTitleEl">Pengaturan</div>
+    <p class="overlay-sub" id="settingsSub" style="margin-bottom:16px">Sesuaikan preferensimu</p>
+
+    <div class="settings-section">
+      <div class="settings-label" id="lblLangSection">Bahasa / Language</div>
+      <div class="lang-btns">
+        <button class="lang-btn selected" id="btnLangID" onclick="setLang('id')">
+          <svg width="18" height="13" style="border-radius:2px"><use href="#ic-flag-id"/></svg>
+          Indonesia
+        </button>
+        <button class="lang-btn" id="btnLangEN" onclick="setLang('en')">
+          <svg width="18" height="13" style="border-radius:2px"><use href="#ic-flag-en"/></svg>
+          English
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label" id="lblAudioSection">Audio</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-icon-wrap">
+            <svg width="14" height="14"><use href="#ic-music"/></svg>
+          </div>
+          <span class="toggle-name" id="lblBgMusic">Musik Latar</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleMusic" checked onchange="toggleMusicSetting()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-icon-wrap">
+            <svg width="14" height="14"><use href="#ic-volume"/></svg>
+          </div>
+          <span class="toggle-name" id="lblSfx">Efek Suara</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="toggleSfx" checked onchange="toggleSfxSetting()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="obtn-close" onclick="closeSettings()" id="btnCloseSettings">Tutup</button>
+  </div>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="resultOverlay">
+  <div class="overlay-card">
+    <div class="overlay-icon overlay-icon-result" id="resultIconWrap">
+      <svg width="48" height="48" style="color:var(--gold)"><use href="#ic-trophy" id="resultIconSvg"/></svg>
+    </div>
+    <div class="overlay-title" id="resultTitle">Hasil Akhir</div>
+    <p class="overlay-sub" id="resultMsg"></p>
+    <div class="result-stats">
+      <div class="result-stat-row">
+        <span class="result-stat-label">
+          <svg width="12" height="12" style="color:var(--muted)"><use href="#ic-piggy"/></svg>
+          <span id="rLblSaving">Tabungan</span>
+        </span>
+        <span class="result-stat-val" id="rSaving"></span>
+      </div>
+      <div class="result-stat-row">
+        <span class="result-stat-label">
+          <svg width="12" height="12" style="color:var(--muted)"><use href="#ic-wallet"/></svg>
+          <span id="rLblMoney">Sisa Uang</span>
+        </span>
+        <span class="result-stat-val" id="rMoney"></span>
+      </div>
+      <div class="result-stat-row">
+        <span class="result-stat-label">
+          <svg width="12" height="12" style="color:var(--muted)"><use href="#ic-calendar"/></svg>
+          <span id="rLblDays">Hari Selesai</span>
+        </span>
+        <span class="result-stat-val" id="rDays"></span>
+      </div>
+    </div>
+    <button class="overlay-btn obtn-restart" onclick="ulangGame()" id="btnRestart">
+      <svg width="14" height="14"><use href="#ic-refresh"/></svg>
+      Ulangi
+    </button>
+    <button class="overlay-btn obtn-menu" onclick="kembaliKeStart()" id="btnToMenu">
+      <svg width="14" height="14"><use href="#ic-home"/></svg>
+      Menu Utama
+    </button>
+  </div>
+</div>
+
+<!-- HISTORY OVERLAY -->
+<div class="overlay" id="historyOverlay">
+  <div class="history-overlay-card">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="overlay-icon overlay-icon-pause" style="width:36px;height:36px;border-radius:9px;margin:0;flex-shrink:0">
+        <svg width="16" height="16" style="color:var(--gold)"><use href="#ic-history"/></svg>
+      </div>
+      <div style="text-align:left">
+        <div class="overlay-title" style="font-size:16px;letter-spacing:1px;margin-bottom:0" id="historyTitle">RIWAYAT</div>
+        <p class="overlay-sub" style="margin-bottom:0;font-size:11px" id="historySub">Hasil permainan tersimpan</p>
+      </div>
+    </div>
+    <div class="history-list" id="historyList"></div>
+    <div class="history-footer">
+      <button class="obtn-clear" onclick="clearHistory()" id="btnClearHistory">
+        <svg width="12" height="12"><use href="#ic-trash"/></svg>
+        Hapus Semua
+      </button>
+      <button class="obtn-history-close" onclick="closeHistory()" id="btnCloseHistory">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* LOCALSTORAGE — HISTORY */
+const STORAGE_KEY = 'finlife_history';
+const MAX_HISTORY = 20;
+
+function saveResult(entry) {
+  try {
+    const hist = getHistory();
+    hist.unshift(entry);
+    if (hist.length > MAX_HISTORY) hist.splice(MAX_HISTORY);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(hist));
+  } catch(e) { console.warn('localStorage error:', e); }
+}
+
+function getHistory() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function openHistory() {
+  renderHistory();
+  document.getElementById('historyOverlay').classList.add('show');
+}
+
+function closeHistory() {
+  document.getElementById('historyOverlay').classList.remove('show');
+}
+
+function clearHistory() {
+  const msg = lang === 'id' ? 'Hapus semua riwayat?' : 'Clear all history?';
+  if (confirm(msg)) {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    renderHistory();
+  }
+}
+
+function renderHistory() {
+  const hist = getHistory();
+  const list = document.getElementById('historyList');
+  const isID = lang === 'id';
+
+  document.getElementById('historyTitle').textContent    = isID ? 'RIWAYAT' : 'HISTORY';
+  document.getElementById('historySub').textContent      = isID ? 'Hasil permainan tersimpan' : 'Saved game results';
+  document.getElementById('btnClearHistory').innerHTML   = `<svg width="12" height="12"><use href="#ic-trash"/></svg>${isID ? ' Hapus Semua' : ' Clear All'}`;
+  document.getElementById('btnCloseHistory').textContent = isID ? 'Tutup' : 'Close';
+
+  if (hist.length === 0) {
+    list.innerHTML = `<div class="history-empty">${isID ? 'Belum ada riwayat permainan.' : 'No game history yet.'}</div>`;
+    return;
+  }
+
+  const icTrophy = `<svg width="17" height="17" style="color:#4ade80"><use href="#ic-trophy"/></svg>`;
+  const icSad    = `<svg width="17" height="17" style="color:#f87171"><use href="#ic-sad"/></svg>`;
+  const icMeh    = `<svg width="17" height="17" style="color:var(--gold)"><use href="#ic-meh"/></svg>`;
+
+  list.innerHTML = hist.map((h, i) => {
+    const bc   = h.status === 'win' ? 'badge-win' : h.status === 'lose' ? 'badge-lose' : 'badge-neutral';
+    const bl   = h.status === 'win'  ? (isID ? 'Menang' : 'Win')
+               : h.status === 'lose' ? (isID ? 'Kalah'  : 'Lose')
+               : (isID ? 'Cukup' : 'Ok');
+    const ic   = h.status === 'win' ? icTrophy : h.status === 'lose' ? icSad : icMeh;
+    const wrap = h.status === 'win' ? 'icon-win' : h.status === 'lose' ? 'icon-lose' : 'icon-neutral';
+
+    return `<div class="history-item">
+      <div class="history-item-icon-wrap ${wrap}">${ic}</div>
+      <div class="history-item-info">
+        <div class="history-item-date">${h.date} · #${hist.length - i}</div>
+        <div class="history-item-result">${isID ? h.msgID : h.msgEN}</div>
+        <div class="history-item-stats">${isID?'Tabungan':'Savings'}: ${h.saving} &nbsp;·&nbsp; ${isID?'Hari':'Days'}: ${h.days}</div>
+      </div>
+      <span class="history-item-badge ${bc}">${bl}</span>
+    </div>`;
+  }).join('');
+}
+
+/* AUDIO ENGINE */
+let audioCtx = null, musicGain = null;
+let musicEnabled = true, sfxEnabled = true, musicPlaying = false;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function startMusic() {
+  if (!musicEnabled || musicPlaying) return;
+  try {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    musicGain = ctx.createGain();
+    musicGain.gain.setValueAtTime(0, ctx.currentTime);
+    musicGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 2);
+    musicGain.connect(ctx.destination);
+    const masterComp = ctx.createDynamicsCompressor();
+    masterComp.connect(musicGain);
+
+    function playChord(freq, startTime, duration, gain=0.12) {
+      const osc=ctx.createOscillator(),g=ctx.createGain();
+      osc.type='sine';osc.frequency.value=freq;
+      g.gain.setValueAtTime(0,startTime);g.gain.linearRampToValueAtTime(gain,startTime+0.05);g.gain.linearRampToValueAtTime(0,startTime+duration-0.05);
+      osc.connect(g);g.connect(masterComp);osc.start(startTime);osc.stop(startTime+duration);
+    }
+    function playMelody(freq,startTime,duration,type='triangle',gain=0.18) {
+      const osc=ctx.createOscillator(),g=ctx.createGain(),filter=ctx.createBiquadFilter();
+      filter.type='lowpass';filter.frequency.value=2000;
+      osc.type=type;osc.frequency.value=freq;
+      g.gain.setValueAtTime(0,startTime);g.gain.linearRampToValueAtTime(gain,startTime+0.02);g.gain.linearRampToValueAtTime(0,startTime+duration-0.01);
+      osc.connect(filter);filter.connect(g);g.connect(masterComp);osc.start(startTime);osc.stop(startTime+duration);
+    }
+
+    const bpm=110,beat=60/bpm,bar=beat*4,loopLen=bar*8;
+    function scheduleLoop(offset) {
+      if (!musicPlaying) return;
+      const t=ctx.currentTime+offset;
+      [[130.81,0],[130.81,2],[174.61,4],[116.54,6]].forEach(([f,b])=>{for(let i=0;i<4;i++)playMelody(f,t+b*beat+i*beat,beat*0.8,'sawtooth',0.1);});
+      [[[261.63,329.63,392],[0,bar]],[[349.23,440,523.25],[bar*2,bar]],[[293.66,369.99,440],[bar*4,bar]],[[246.94,311.13,392],[bar*6,bar]]].forEach(([freqs,[s,d]])=>{freqs.forEach(f=>playChord(f,t+s,d,0.04));});
+      [[523.25,0*beat,beat*0.9],[493.88,1*beat,beat*0.9],[440,2*beat,beat*0.9],[392,3*beat,beat*1.9],[523.25,4*beat,beat*0.5],[587.33,5*beat,beat*0.5],[523.25,6*beat,beat*0.9],[493.88,7*beat,beat*0.9],[440,8*beat,beat*1.9],[392,10*beat,beat*0.5],[349.23,11*beat,beat*1.5],[392,13*beat,beat*0.5],[440,14*beat,beat*0.9],[493.88,15*beat,beat*0.9],[523.25,16*beat,beat*1.9],[587.33,18*beat,beat*0.5],[659.25,19*beat,beat*0.5],[587.33,20*beat,beat*0.9],[523.25,21*beat,beat*0.9],[493.88,22*beat,beat*1.9],[440,24*beat,beat*0.5],[392,25*beat,beat*0.5],[349.23,26*beat,beat*1.9],[329.63,28*beat,beat*0.5],[349.23,29*beat,beat*0.5],[392,30*beat,beat*1.9]].forEach(([f,s,d])=>playMelody(f,t+s,d,'triangle',0.25));
+      setTimeout(()=>scheduleLoop(loopLen-0.1),(loopLen-0.2)*1000);
+    }
+    musicPlaying=true; scheduleLoop(0);
+  } catch(e) { console.warn('Music error:',e); }
+}
+
+function stopMusic() {
+  musicPlaying=false;
+  if(musicGain){try{const ctx=getAudioCtx();musicGain.gain.linearRampToValueAtTime(0,ctx.currentTime+0.5);}catch(e){}}
+}
+function pauseMusic(){if(audioCtx&&audioCtx.state==='running')audioCtx.suspend();}
+function resumeMusic(){if(audioCtx&&audioCtx.state==='suspended'&&musicEnabled)audioCtx.resume();}
+
+function sfx(type) {
+  if (!sfxEnabled) return;
+  try {
+    const ctx=getAudioCtx();if(ctx.state==='suspended')ctx.resume();const t=ctx.currentTime;
+    if(type==='coin'){[523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.2,t+i*0.07);g.gain.exponentialRampToValueAtTime(0.001,t+i*0.07+0.2);o.connect(g);g.connect(ctx.destination);o.start(t+i*0.07);o.stop(t+i*0.07+0.22);});}
+    else if(type==='lose'){[220,185,155].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.value=f;g.gain.setValueAtTime(0.18,t+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,t+i*0.1+0.25);o.connect(g);g.connect(ctx.destination);o.start(t+i*0.1);o.stop(t+i*0.1+0.28);});}
+    else if(type==='click'){const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.value=800;g.gain.setValueAtTime(0.08,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.07);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+0.08);}
+    else if(type==='save'){[392,523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.15,t+i*0.09);g.gain.exponentialRampToValueAtTime(0.001,t+i*0.09+0.35);o.connect(g);g.connect(ctx.destination);o.start(t+i*0.09);o.stop(t+i*0.09+0.38);});}
+    else if(type==='win'){[523.25,659.25,783.99,1046.5,783.99,1046.5].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.15,t+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,t+i*0.1+0.35);o.connect(g);g.connect(ctx.destination);o.start(t+i*0.1);o.stop(t+i*0.1+0.4);});}
+    else if(type==='pause'){[440,330].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.12,t+i*0.12);g.gain.exponentialRampToValueAtTime(0.001,t+i*0.12+0.2);o.connect(g);g.connect(ctx.destination);o.start(t+i*0.12);o.stop(t+i*0.12+0.22);});}
+  } catch(e){console.warn('SFX error:',e);}
+}
+
+/* LANGUAGE */
+let lang = 'id';
+
+const strings = {
+  id: {
+    startDesc: 'Kelola uangmu selama 30 hari, ambil keputusan terbaik, dan capai target tabungan Rp1.000.000.',
+    startBtn: 'MAINKAN', startNote: 'Aktifkan volume untuk pengalaman terbaik',
+    startHistory: 'Riwayat Permainan',
+    lblDay: 'Hari', lblMoney: 'Uang', lblSaving: 'Tabungan', lblTarget: 'Target',
+    lblProgress: 'Progress Tabungan',
+    tip: 'Tip: Jangan boros di awal bulan',
+    btnYes: 'Iya', btnNo: 'Tidak',
+    pauseTitle: 'PAUSE', pauseSub: 'Game dijeda',
+    btnResume: 'Lanjutkan', btnQuit: 'Selesai',
+    settingsTitle: 'Pengaturan', settingsSub: 'Sesuaikan preferensimu',
+    lblLangSection: 'Bahasa / Language', lblAudioSection: 'Audio',
+    lblBgMusic: 'Musik Latar', lblSfx: 'Efek Suara', btnClose: 'Tutup',
+    resultTitle: 'Hasil Akhir',
+    rLblSaving: 'Tabungan', rLblMoney: 'Sisa Uang', rLblDays: 'Hari Selesai',
+    btnRestart: 'Ulangi', btnToMenu: 'Menu Utama',
+    winMsg: 'Luar biasa! Kamu berhasil mencapai target tabungan!',
+    loseMoneyMsg: 'Kamu kehabisan uang sebelum mencapai target.',
+    neutralMsg: 'Cukup baik! Masih ada ruang untuk ditingkatkan.',
+    days: 'hari',
+  },
+  en: {
+    startDesc: 'Manage your money for 30 days, make the best decisions, and reach the Rp1,000,000 savings target.',
+    startBtn: 'PLAY', startNote: 'Turn up the volume for the best experience',
+    startHistory: 'Game History',
+    lblDay: 'Day', lblMoney: 'Money', lblSaving: 'Savings', lblTarget: 'Target',
+    lblProgress: 'Savings Progress',
+    tip: "Tip: Don't overspend in the first days",
+    btnYes: 'Yes', btnNo: 'No',
+    pauseTitle: 'PAUSE', pauseSub: 'Game paused',
+    btnResume: 'Resume', btnQuit: 'Quit',
+    settingsTitle: 'Settings', settingsSub: 'Adjust your preferences',
+    lblLangSection: 'Bahasa / Language', lblAudioSection: 'Audio',
+    lblBgMusic: 'Background Music', lblSfx: 'Sound Effects', btnClose: 'Close',
+    resultTitle: 'Final Result',
+    rLblSaving: 'Savings', rLblMoney: 'Money Left', rLblDays: 'Days Played',
+    btnRestart: 'Retry', btnToMenu: 'Main Menu',
+    winMsg: 'Amazing! You reached your savings target!',
+    loseMoneyMsg: 'You ran out of money before reaching the target.',
+    neutralMsg: "Not bad! There's still room to improve.",
+    days: 'days',
+  }
+};
+
+function t(key) { return strings[lang][key] || key; }
+
+function applyLang() {
+  const s = strings[lang];
+  document.getElementById('startDesc').textContent = s.startDesc;
+  document.getElementById('startBtn').innerHTML = `<svg width="15" height="15"><use href="#ic-play"/></svg>${s.startBtn}`;
+  document.getElementById('startMusicNote').innerHTML = `<svg width="12" height="12" style="opacity:.5"><use href="#ic-music"/></svg>${s.startNote}`;
+  document.getElementById('startHistoryBtn').innerHTML = `<svg width="14" height="14"><use href="#ic-history"/></svg>${s.startHistory}`;
+  document.getElementById('lblDay').textContent = s.lblDay;
+  document.getElementById('lblMoney').textContent = s.lblMoney;
+  document.getElementById('lblSaving').textContent = s.lblSaving;
+  document.getElementById('lblTarget').textContent = s.lblTarget;
+  document.getElementById('lblProgress').textContent = s.lblProgress;
+  document.getElementById('gameTip').innerHTML = `<svg width="12" height="12" style="color:var(--gold);opacity:.7"><use href="#ic-tip"/></svg>${s.tip}`;
+  document.getElementById('btnYes').innerHTML = `<svg width="14" height="14"><use href="#ic-check"/></svg>${s.btnYes}`;
+  document.getElementById('btnNo').innerHTML  = `<svg width="14" height="14"><use href="#ic-x"/></svg>${s.btnNo}`;
+  document.getElementById('pauseTitle').textContent = s.pauseTitle;
+  document.getElementById('pauseSub').textContent = s.pauseSub;
+  document.getElementById('btnResume').innerHTML = `<svg width="14" height="14"><use href="#ic-play"/></svg>${s.btnResume}`;
+  document.getElementById('btnQuit').innerHTML   = `<svg width="14" height="14"><use href="#ic-x"/></svg>${s.btnQuit}`;
+  document.getElementById('settingsTitleEl').textContent = s.settingsTitle;
+  document.getElementById('settingsSub').textContent = s.settingsSub;
+  document.getElementById('lblLangSection').textContent = s.lblLangSection;
+  document.getElementById('lblAudioSection').textContent = s.lblAudioSection;
+  document.getElementById('lblBgMusic').textContent = s.lblBgMusic;
+  document.getElementById('lblSfx').textContent = s.lblSfx;
+  document.getElementById('btnCloseSettings').textContent = s.btnClose;
+  document.getElementById('resultTitle').textContent = s.resultTitle;
+  document.getElementById('rLblSaving').textContent = s.rLblSaving;
+  document.getElementById('rLblMoney').textContent = s.rLblMoney;
+  document.getElementById('rLblDays').textContent = s.rLblDays;
+  document.getElementById('btnRestart').innerHTML = `<svg width="14" height="14"><use href="#ic-refresh"/></svg>${s.btnRestart}`;
+  document.getElementById('btnToMenu').innerHTML  = `<svg width="14" height="14"><use href="#ic-home"/></svg>${s.btnToMenu}`;
+  if (window.currentEvent) showEvent(window.currentEvent);
+}
+
+function setLang(l) {
+  sfx('click');
+  lang = l;
+  document.getElementById('btnLangID').classList.toggle('selected', l === 'id');
+  document.getElementById('btnLangEN').classList.toggle('selected', l === 'en');
+  applyLang();
+}
+
+/* EVENTS DATA */
+const events = [
+  {id:{text:"Teman ngajak nongkrong (Rp100.000) atau ditabung?",a:"Nongkrong",b:"Tabung"},en:{text:"Friend wants to hang out (Rp100,000) or save it?",a:"Go out",b:"Save"},a:()=>{uang-=100000;return'lose';},b:()=>{tabungan+=100000;return'save';}},
+  {id:{text:"Beli sepatu diskon (Rp200.000)?",a:"Beli",b:"Lewati"},en:{text:"Buy discounted shoes (Rp200,000)?",a:"Buy",b:"Skip"},a:()=>{uang-=200000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Investasi Rp150.000 (untung 20%)?",a:"Investasi",b:"Lewati"},en:{text:"Invest Rp150,000 (20% profit)?",a:"Invest",b:"Skip"},a:()=>{uang-=150000;uang+=150000*1.2;return'coin';},b:()=>'neutral'},
+  {id:{text:"Makan mahal Rp120.000 atau hemat Rp40.000?",a:"Makan mahal",b:"Hemat"},en:{text:"Expensive meal Rp120,000 or eat cheap Rp40,000?",a:"Splurge",b:"Eat cheap"},a:()=>{uang-=120000;return'lose';},b:()=>{uang-=40000;return'neutral';}},
+  {id:{text:"Ada promo game online Rp75.000. Beli?",a:"Beli",b:"Tidak"},en:{text:"Online game promo Rp75,000. Buy it?",a:"Buy",b:"No"},a:()=>{uang-=75000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat uang dari bantu tetangga Rp80.000. Mau disimpan?",a:"Simpan uang",b:"Tabung"},en:{text:"Earned Rp80,000 helping a neighbor. Keep or save?",a:"Keep",b:"Save"},a:()=>{uang+=80000;return'coin';},b:()=>{tabungan+=80000;return'save';}},
+  {id:{text:"Motor mogok, servis Rp250.000 atau tambal sendiri Rp100.000?",a:"Servis bengkel",b:"Tambal sendiri"},en:{text:"Motorcycle broke down. Full service Rp250,000 or DIY Rp100,000?",a:"Full service",b:"DIY fix"},a:()=>{uang-=250000;return'lose';},b:()=>{uang-=100000;return'lose';}},
+  {id:{text:"Beli kopi kekinian Rp50.000?",a:"Beli",b:"Lewati"},en:{text:"Trendy coffee Rp50,000?",a:"Buy",b:"Skip"},a:()=>{uang-=50000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Ikut lomba dan menang Rp200.000! Mau ditabung?",a:"Pegang sendiri",b:"Tabung"},en:{text:"You won a contest! Rp200,000 prize! Save it?",a:"Keep it",b:"Save"},a:()=>{uang+=200000;return'coin';},b:()=>{tabungan+=200000;return'save';}},
+  {id:{text:"Beli tiket konser Rp300.000?",a:"Beli tiket",b:"Lewati"},en:{text:"Buy concert tickets Rp300,000?",a:"Buy tickets",b:"Skip"},a:()=>{uang-=300000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat gaji kecil dari tugas sampingan Rp120.000",a:"Simpan",b:"Tabung"},en:{text:"Earned Rp120,000 from a side gig",a:"Keep it",b:"Save it"},a:()=>{uang+=120000;return'coin';},b:()=>{tabungan+=120000;return'save';}},
+  {id:{text:"Laptop error ringan, bayar perbaikan Rp90.000?",a:"Perbaiki",b:"Biarkan"},en:{text:"Laptop has minor issues, pay Rp90,000 to fix?",a:"Fix it",b:"Leave it"},a:()=>{uang-=90000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat cashback belanja Rp40.000! Mau ditabung?",a:"Simpan",b:"Tabung"},en:{text:"Got Rp40,000 cashback! Save it?",a:"Keep it",b:"Save it"},a:()=>{uang+=40000;return'coin';},b:()=>{tabungan+=40000;return'save';}},
+  {id:{text:"Beli skin game Rp80.000?",a:"Beli",b:"Lewati"},en:{text:"Buy a game skin for Rp80,000?",a:"Buy",b:"Skip"},a:()=>{uang-=80000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Menabung Rp100.000 hari ini?",a:"Tabung sekarang",b:"Nanti saja"},en:{text:"Save Rp100,000 today?",a:"Save now",b:"Maybe later"},a:()=>{tabungan+=100000;return'save';},b:()=>'neutral'},
+  {id:{text:"Teman minta pinjam uang Rp50.000?",a:"Pinjamkan",b:"Tolak"},en:{text:"Friend asks to borrow Rp50,000?",a:"Lend it",b:"Decline"},a:()=>{uang-=50000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat THR kecil Rp150.000! Mau ditabung?",a:"Pegang sendiri",b:"Tabung"},en:{text:"Received a bonus of Rp150,000! Save it?",a:"Keep it",b:"Save it"},a:()=>{uang+=150000;return'coin';},b:()=>{tabungan+=150000;return'save';}},
+  {id:{text:"Beli jaket baru Rp180.000?",a:"Beli",b:"Lewati"},en:{text:"Buy a new jacket for Rp180,000?",a:"Buy",b:"Skip"},a:()=>{uang-=180000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Jalan kaki hemat Rp20.000. Mau?",a:"Jalan kaki",b:"Naik kendaraan"},en:{text:"Walking saves Rp20,000. Do it?",a:"Walk",b:"Take transport"},a:()=>{tabungan+=20000;return'save';},b:()=>{uang-=20000;return'lose';}},
+  {id:{text:"Beli makanan cepat saji Rp60.000?",a:"Beli",b:"Masak sendiri"},en:{text:"Buy fast food for Rp60,000?",a:"Buy",b:"Cook at home"},a:()=>{uang-=60000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Ikut kursus online Rp130.000 untuk skill baru?",a:"Ikut kursus",b:"Lewati"},en:{text:"Join an online course for Rp130,000?",a:"Join",b:"Skip"},a:()=>{uang-=130000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat bonus kerja kecil Rp90.000",a:"Simpan",b:"Tabung"},en:{text:"Got a small work bonus of Rp90,000",a:"Keep it",b:"Save it"},a:()=>{uang+=90000;return'coin';},b:()=>{tabungan+=90000;return'save';}},
+  {id:{text:"Beli aksesoris HP Rp70.000?",a:"Beli",b:"Lewati"},en:{text:"Buy phone accessories for Rp70,000?",a:"Buy",b:"Skip"},a:()=>{uang-=70000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Bantu orang tua, dikasih Rp100.000. Mau ditabung?",a:"Pegang sendiri",b:"Tabung"},en:{text:"Helped your parents, received Rp100,000. Save it?",a:"Keep it",b:"Save it"},a:()=>{uang+=100000;return'coin';},b:()=>{tabungan+=100000;return'save';}},
+  {id:{text:"Beli buku atau alat belajar Rp110.000?",a:"Beli",b:"Lewati"},en:{text:"Buy books or study materials for Rp110,000?",a:"Buy",b:"Skip"},a:()=>{uang-=110000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Diskon belanja bulanan, hemat Rp60.000!",a:"Belanja hemat",b:"Beli biasa"},en:{text:"Monthly shopping discount, save Rp60,000!",a:"Buy discounted",b:"Buy regular"},a:()=>{uang-=60000;return'neutral';},b:()=>{uang-=120000;return'lose';}},
+  {id:{text:"Menang giveaway kecil Rp50.000! Mau ditabung?",a:"Pegang sendiri",b:"Tabung"},en:{text:"Won a small giveaway: Rp50,000! Save it?",a:"Keep it",b:"Save it"},a:()=>{uang+=50000;return'coin';},b:()=>{tabungan+=50000;return'save';}},
+  {id:{text:"Biaya internet bulanan Rp75.000 jatuh tempo",a:"Bayar sekarang",b:"Tunda"},en:{text:"Monthly internet bill Rp75,000 is due",a:"Pay now",b:"Delay"},a:()=>{uang-=75000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Dapat uang saku tambahan Rp100.000!",a:"Simpan",b:"Tabung"},en:{text:"Received extra allowance Rp100,000!",a:"Keep it",b:"Save it"},a:()=>{uang+=100000;return'coin';},b:()=>{tabungan+=100000;return'save';}},
+  {id:{text:"Beli makanan mewah Rp140.000?",a:"Beli",b:"Lewati"},en:{text:"Buy a fancy meal Rp140,000?",a:"Buy",b:"Skip"},a:()=>{uang-=140000;return'lose';},b:()=>'neutral'},
+  {id:{text:"Menabung konsisten Rp80.000 hari ini?",a:"Tabung",b:"Nanti saja"},en:{text:"Consistently save Rp80,000 today?",a:"Save",b:"Maybe later"},a:()=>{tabungan+=80000;return'save';},b:()=>'neutral'}
+];
+
+/* GAME STATE */
+let hari=1,uang=1000000,tabungan=0;
+const target=1000000;
+let paused=false,currentEvent=null,processing=false;
+
+function formatRp(n){return'Rp '+n.toLocaleString('id-ID');}
+
+function updateUI(){
+  document.getElementById('day').textContent=hari;
+  document.getElementById('money').textContent=formatRp(uang);
+  document.getElementById('saving').textContent=formatRp(tabungan);
+  const pct=Math.min(100,Math.round((tabungan/target)*100));
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+}
+
+function showEvent(e){
+  const d=e[lang]||e.id;
+  document.getElementById('eventText').textContent=d.text;
+  document.getElementById('btnYes').innerHTML=`<svg width="14" height="14"><use href="#ic-check"/></svg>${d.a||t('btnYes')}`;
+  document.getElementById('btnNo').innerHTML=`<svg width="14" height="14"><use href="#ic-x"/></svg>${d.b||t('btnNo')}`;
+}
+
+function nextEvent(){
+  if(hari>30||uang<=0){selesai();return;}
+  currentEvent=events[Math.floor(Math.random()*events.length)];
+  window.currentEvent=currentEvent;
+  showEvent(currentEvent);
+  const card=document.getElementById('eventCard');
+  card.style.opacity='0';card.style.transform='translateY(8px)';
+  setTimeout(()=>{card.style.transition='all 0.3s cubic-bezier(.16,1,.3,1)';card.style.opacity='1';card.style.transform='translateY(0)';},40);
+}
+
+function pilih(choice){
+  if(paused||processing)return;
+  processing=true;sfx('click');
+  document.getElementById('btnYes').disabled=true;
+  document.getElementById('btnNo').disabled=true;
+  setTimeout(()=>{
+    const result=choice===1?currentEvent.a():currentEvent.b();
+    if(result==='coin')sfx('coin');
+    else if(result==='lose')sfx('lose');
+    else if(result==='save')sfx('save');
+    const card=document.getElementById('eventCard');
+    if(result==='lose'){card.classList.add('shake');setTimeout(()=>card.classList.remove('shake'),350);}
+    else if(result==='save'||result==='coin'){const val=document.getElementById('saving');val.classList.add('pulse');setTimeout(()=>val.classList.remove('pulse'),300);}
+    hari++;updateUI();
+    document.getElementById('btnYes').disabled=false;
+    document.getElementById('btnNo').disabled=false;
+    processing=false;nextEvent();
+  },240);
+}
+
+/* SCREENS */
+function mulaiGame(){
+  sfx('click');
+  if(window.stopParticles) stopParticles();
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameScreen').classList.add('active');
+  hari=1;uang=1000000;tabungan=0;paused=false;processing=false;
+  updateUI();applyLang();nextEvent();
+  setTimeout(()=>startMusic(),400);
+}
+
+function setResultIcon(status){
+  const wrap=document.getElementById('resultIconWrap');
+  const icId = status==='win' ? 'ic-trophy' : status==='lose' ? 'ic-sad' : 'ic-meh';
+  const col   = status==='win' ? 'var(--gold)' : status==='lose' ? '#f87171' : 'var(--gold)';
+  wrap.innerHTML=`<svg width="48" height="48" style="color:${col}"><use href="#${icId}"/></svg>`;
+}
+
+function selesai(){
+  stopMusic();
+  let msgID,msgEN,status;
+  if(uang<=0){msgID=strings.id.loseMoneyMsg;msgEN=strings.en.loseMoneyMsg;status='lose';sfx('lose');}
+  else if(tabungan>=target){msgID=strings.id.winMsg;msgEN=strings.en.winMsg;status='win';sfx('win');}
+  else{msgID=strings.id.neutralMsg;msgEN=strings.en.neutralMsg;status='neutral';sfx('coin');}
+
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  saveResult({status,msgID,msgEN,saving:formatRp(tabungan),money:formatRp(Math.max(0,uang)),days:Math.min(30,hari-1),date:dateStr,timestamp:now.getTime()});
+
+  setResultIcon(status);
+  document.getElementById('resultMsg').textContent=lang==='id'?msgID:msgEN;
+  document.getElementById('rSaving').textContent=formatRp(tabungan);
+  document.getElementById('rMoney').textContent=formatRp(Math.max(0,uang));
+  document.getElementById('rDays').textContent=Math.min(30,hari-1)+' '+t('days');
+  document.getElementById('resultTitle').textContent=t('resultTitle');
+  document.getElementById('rLblSaving').textContent=t('rLblSaving');
+  document.getElementById('rLblMoney').textContent=t('rLblMoney');
+  document.getElementById('rLblDays').textContent=t('rLblDays');
+  document.getElementById('btnRestart').innerHTML=`<svg width="14" height="14"><use href="#ic-refresh"/></svg>${t('btnRestart')}`;
+  document.getElementById('btnToMenu').innerHTML=`<svg width="14" height="14"><use href="#ic-home"/></svg>${t('btnToMenu')}`;
+  document.getElementById('resultOverlay').classList.add('show');
+}
+
+function ulangGame(){
+  sfx('click');
+  document.getElementById('resultOverlay').classList.remove('show');
+  hari=1;uang=1000000;tabungan=0;paused=false;processing=false;
+  updateUI();nextEvent();startMusic();
+}
+
+function kembaliKeStart(){
+  sfx('click');stopMusic();
+  document.getElementById('resultOverlay').classList.remove('show');
+  document.getElementById('pauseOverlay').classList.remove('show');
+  document.getElementById('gameScreen').classList.remove('active');
+  document.getElementById('startScreen').style.display='flex';
+  if(window.startParticles) startParticles();
+  hari=1;uang=1000000;tabungan=0;paused=false;processing=false;
+}
+
+function togglePause(){
+  sfx('pause');paused=!paused;
+  const overlay=document.getElementById('pauseOverlay');
+  const btn=document.getElementById('pauseBtn');
+  if(paused){
+    overlay.classList.add('show');pauseMusic();btn.classList.add('active-btn');
+    btn.innerHTML=`<svg width="15" height="15"><use href="#ic-play"/></svg>`;
+  }else{
+    overlay.classList.remove('show');resumeMusic();btn.classList.remove('active-btn');
+    btn.innerHTML=`<svg width="15" height="15"><use href="#ic-pause"/></svg>`;
+  }
+}
+
+function quitToMenu(){sfx('click');paused=false;kembaliKeStart();}
+function openSettings(){sfx('click');document.getElementById('settingsOverlay').classList.add('show');}
+function closeSettings(){sfx('click');document.getElementById('settingsOverlay').classList.remove('show');}
+function toggleMusicSetting(){musicEnabled=document.getElementById('toggleMusic').checked;if(musicEnabled)startMusic();else stopMusic();}
+function toggleSfxSetting(){sfxEnabled=document.getElementById('toggleSfx').checked;}
+
+applyLang();
+
+/* PARTICLE CANVAS */
+(function(){
+  const canvas = document.getElementById('startCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], raf;
+
+  function resize() {
+    const el = document.getElementById('startScreen');
+    W = canvas.width  = el.offsetWidth;
+    H = canvas.height = el.offsetHeight;
+  }
+
+  function randomParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + Math.random() * 60,
+      r: Math.random() * 2.2 + 0.6,
+      speed: Math.random() * 0.5 + 0.2,
+      drift: (Math.random() - 0.5) * 0.4,
+      opacity: Math.random() * 0.55 + 0.15,
+      twinkle: Math.random() * Math.PI * 2,
+      twinkleSpeed: Math.random() * 0.03 + 0.01,
+    };
+  }
+
+  function init() {
+    resize();
+    particles = [];
+    for (let i = 0; i < 55; i++) {
+      const p = randomParticle();
+      p.y = Math.random() * H; // scattered on start
+      particles.push(p);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.twinkle += p.twinkleSpeed;
+      const alpha = p.opacity * (0.6 + 0.4 * Math.sin(p.twinkle));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,200,66,${alpha})`;
+      ctx.fill();
+
+      // small cross sparkle on bigger particles
+      if (p.r > 1.8) {
+        ctx.strokeStyle = `rgba(255,230,100,${alpha * 0.5})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x - p.r * 2, p.y);
+        ctx.lineTo(p.x + p.r * 2, p.y);
+        ctx.moveTo(p.x, p.y - p.r * 2);
+        ctx.lineTo(p.x, p.y + p.r * 2);
+        ctx.stroke();
+      }
+
+      p.y  -= p.speed;
+      p.x  += p.drift;
+      if (p.y < -10) { Object.assign(p, randomParticle()); p.x = Math.random() * W; }
+    });
+    raf = requestAnimationFrame(draw);
+  }
+
+  function start() { init(); draw(); }
+  function stop()  { cancelAnimationFrame(raf); }
+
+  window.startParticles = start;
+  window.stopParticles  = stop;
+
+  // auto-start & resize
+  start();
+  window.addEventListener('resize', () => { resize(); });
+})();
+
+/* update applyLang for new start structure */
+const _origApplyLang = applyLang;
+applyLang = function() {
+  _origApplyLang();
+};
+applyLang();
+</script>
+</body>
+</html>
